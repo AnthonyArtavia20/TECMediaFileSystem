@@ -1,3 +1,4 @@
 {
-  "cmake.sourceDirectory": "/home/anthony/Documents/Datos2/Proyetos/Proyecto3_TECMEDIAFILESYSTEM/TecMediaFileSystem/Core"
+  "cmake.sourceDirectory": "/home/anthony/Documents/Datos2/Proyetos/Proyecto3_TECMEDIAFILESYSTEM/TecMediaFileSystem/Core",
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python"
 }
