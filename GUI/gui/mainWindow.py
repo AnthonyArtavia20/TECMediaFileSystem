@@ -1,9 +1,15 @@
 #Desde aquí se va a iniciar la interfaz que llamará la lógica de c++ y sus métodos
+import os
+import sys
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../"))) #Para poder encontrar la carpeta utils
+
 import tkinter as tk
 
 from PIL import ImageTk, Image
 from tkinter import ttk, filedialog, messagebox
 from datetime import datetime
+
+from utils.formatUtils import format_bytes
 
 class TecMFSApp(tk.Tk):
     def __init__(self):
@@ -103,9 +109,10 @@ class TecMFSApp(tk.Tk):
         path = filedialog.askopenfilename()
         if path:
             filename = path.split("/")[-1]
-            size = "1.2 MB"
+            fileSize = os.path.getsize(path)
+            correctBytesSize = format_bytes(fileSize)
             date = datetime.now().strftime("%Y-%m-%d")
-            self.file_table.insert("", "end", values=(filename, size, date))
+            self.file_table.insert("", "end", values=(filename, correctBytesSize, date, "Descargar | Eliminar"))
             messagebox.showinfo("Subida", f"Archivo '{filename}' subido (simulado).")
 
     def on_table_click(self,event):
