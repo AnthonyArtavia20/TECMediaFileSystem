@@ -1,1 +1,0 @@
-// Lectura/escritura de bloques
