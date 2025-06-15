@@ -1,18 +1,13 @@
 #!/bin/bash
 
-echo "Compilando backend..."
-mkdir -p build
-cd build
-cmake ..
-make
+cmake -S . -B build
+cmake --build build
 
 echo "Iniciando disk node..."
-./TECMFS-Disk &
+(cd build && ./TECMFS-Disk)
 
 echo "Iniciando controller..."
-./TECMFS-Controller &
-
-cd ..
+(cd build && ./TECMFS-Controller ../PDFprueba.pdf) &
 
 echo "Ejecutando GUI en Python..."
 cd GUI

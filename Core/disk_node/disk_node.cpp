@@ -7,12 +7,12 @@
 
 
 
-DiskNode::DiskNode(const std::string& configPath) {
+Disk_Node::Disk_Node(const std::string& configPath) {
     loadConfig(configPath);
     numBlocks = diskSize / blockSize;
 }
 
-void DiskNode::loadConfig(const std::string& configPath) {
+void Disk_Node::loadConfig(const std::string& configPath) {
     pugi::xml_document doc;
     if (!doc.load_file(configPath.c_str())) {
         throw std::runtime_error("Error loading config.xml");
@@ -26,7 +26,7 @@ void DiskNode::loadConfig(const std::string& configPath) {
     diskSize = root.child("DiskSize").text().as_int();
 }
 
-void DiskNode::initializeStorage() {
+void Disk_Node::initializeStorage() {
     std::filesystem::create_directories(storagePath);
 
     for (int i = 0; i < numBlocks; ++i) {
@@ -39,6 +39,6 @@ void DiskNode::initializeStorage() {
     }
 }
 
-void DiskNode::printInfo() {
+void Disk_Node::printInfo() {
     std::cout << "IP: " << ip << "\nPort: " << port << "\nBlocks: " << numBlocks << std::endl;
 }

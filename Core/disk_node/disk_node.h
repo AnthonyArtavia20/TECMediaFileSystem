@@ -4,9 +4,9 @@
 
 #include <string>
 
-class DiskNode {
+class Disk_Node {
 public:
-    DiskNode(const std::string& configPath);
+    Disk_Node(const std::string& configPath);
     void initializeStorage();
     void printInfo();
 
