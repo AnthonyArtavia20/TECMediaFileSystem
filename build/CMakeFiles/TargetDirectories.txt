@@ -1,0 +1,4 @@
+/Users/sergiodanielalvarezchanto/Desktop/TECMediaFileSystem/build/CMakeFiles/TECMFS-Disk.dir
+/Users/sergiodanielalvarezchanto/Desktop/TECMediaFileSystem/build/CMakeFiles/TECMFS-Controller.dir
+/Users/sergiodanielalvarezchanto/Desktop/TECMediaFileSystem/build/CMakeFiles/edit_cache.dir
+/Users/sergiodanielalvarezchanto/Desktop/TECMediaFileSystem/build/CMakeFiles/rebuild_cache.dir

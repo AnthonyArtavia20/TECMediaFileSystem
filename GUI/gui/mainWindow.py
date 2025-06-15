@@ -34,7 +34,7 @@ class TecMFSApp(tk.Tk):
         tk.Label(information_frame, text="TEC Media File System App", font=("Arial", 15, "bold"), bg="#f2f2f2").pack(anchor="w")
 
         #logo
-        image1Logo = Image.open("GUI/gui/assets/logo.png")
+        image1Logo = Image.open("gui/assets/logo.png")
         image1Logo = image1Logo.resize((110,110), Image.LANCZOS)
         self.logo_image = ImageTk.PhotoImage(image1Logo)
         logo_label = tk.Label(information_frame, image=self.logo_image, bg="#f2f2f2")
@@ -56,7 +56,7 @@ class TecMFSApp(tk.Tk):
             frame = tk.Frame(disk_frame, bg="#d9d9d9", bd=1, relief=tk.RIDGE, padx=10, pady=5)
             frame.pack(side=tk.LEFT, expand=True, padx=5)
             tk.Label(frame, text=f"Disco {i+1}", font=("Arial", 10, "bold")).pack()
-            tk.Label(frame, text="🟢 OK", font=("Arial", 12)).pack()
+            tk.Label(frame, text="OK", font=("Arial", 12)).pack()
             tk.Label(frame, text="Uso: 75%", font=("Arial", 10)).pack()
 
     def create_file_table(self):
