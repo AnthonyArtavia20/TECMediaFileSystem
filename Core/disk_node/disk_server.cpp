@@ -1,1 +1,0 @@
-//servidor local del disco
