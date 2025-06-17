@@ -1,7 +1,7 @@
 <DiskNode>
     <IP>127.0.0.1</IP>
     <Port>5001</Port>
-    <StoragePath>storage/</StoragePath>
-    <BlockSize>4096</BlockSize>
+    <StoragePath>storage/disk1/</StoragePath>
+    <BlockSize>4096*2</BlockSize>
     <DiskSize>10,485,760</DiskSize> <!--10Mb de espacio reservado-->
 </DiskNode>
