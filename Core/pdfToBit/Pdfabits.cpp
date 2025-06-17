@@ -37,17 +37,17 @@ std::vector<uint8_t> PdfaBit::reconstructFromBlocks(const std::vector<std::vecto
 // ---- logica para pasar la informacion al controller ---
 
 // Escribir los bloques que se le pasan al controlador 
-void PdfaBit::writeBlock(const std::string& path, int stripeIndex, const std::vector<uint8_t>& data) {
-    std::filesystem::create_directories(path);
-    std::string filename = path + "/block_" + std::to_string(stripeIndex) + ".bin";
-    std::ofstream out(filename, std::ios::binary);
+void PdfaBit::writeBlock(const std::string& path, const std::string& filename, int stripeIndex, const std::vector<uint8_t>& data) {
+    std::filesystem::create_directories(path + "/" + filename);
+    std::string filepath = path + "/" + filename + "/block_" + std::to_string(stripeIndex) + ".bin";
+    std::ofstream out(filepath, std::ios::binary);
     out.write(reinterpret_cast<const char*>(data.data()), data.size());
 }
 
 // Leer los bloques que se le pasan al controlador 
-std::vector<uint8_t> PdfaBit::readBlock(const std::string& nodePath, int index) {
-    std::string filename = nodePath + "/block_" + std::to_string(index) + ".bin";
-    return readFile(filename);
+std::vector<uint8_t> PdfaBit::readBlock(const std::string& nodePath, const std::string& filename, int index) {
+    std::string filepath = nodePath + "/" + filename + "/block_" + std::to_string(index) + ".bin";
+    return readFile(filepath);
 }
 
 bool PdfaBit::compare(const std::vector<uint8_t>& a, const std::vector<uint8_t>& b) {
@@ -66,19 +66,21 @@ std::vector<uint8_t> PdfaBit::recoverBlockUsingParity(const std::vector<std::vec
     return result;
 }
 
-void PdfaBit::rebuildMissingBlock(int stripeIndex, const std::vector<std::string>& nodePaths, int missingNodeIndex) {
+void PdfaBit::rebuildMissingBlock(int stripeIndex, const std::vector<std::string>& nodePaths, int missingNodeIndex, const std::string& filename) {
     std::vector<std::vector<uint8_t>> presentBlocks;
     for (size_t i = 0; i < nodePaths.size(); ++i) {
         if (i == missingNodeIndex) continue;
         try {
-            auto block = PdfaBit::readBlock(nodePaths[i], stripeIndex);
+            auto block = PdfaBit::readBlock(nodePaths[i], filename, stripeIndex);
             presentBlocks.push_back(block);
         } catch (const std::exception& ex) {
             std::cerr << "Error leyendo bloque " << stripeIndex << " en nodo " << i << ": " << ex.what() << "\n";
             return;
         }
     }
+
     auto recovered = PdfaBit::recoverBlockUsingParity(presentBlocks);
-    PdfaBit::writeBlock(nodePaths[missingNodeIndex], stripeIndex, recovered);
+    PdfaBit::writeBlock(nodePaths[missingNodeIndex], filename, stripeIndex, recovered);
 }
+
 
