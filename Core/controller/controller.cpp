@@ -66,7 +66,7 @@ bool Raid5Controller::recoverMissingBlocks() {
     bool reconstructedBlock = false;
 
     int totalDisks = nodes.size();
-    int maxStripes = 1000; 
+    int maxStripes = 17;//PdfaBit::getMaxStripeIndex(nodes);; 
 
     for (int stripe = 0; stripe < maxStripes; ++stripe) {
         int missingIndex = -1;
@@ -109,7 +109,7 @@ bool Raid5Controller::recoverMissingBlocks() {
 
 bool Raid5Controller::rebuildOriginalFile(const std::string& outputPath) {
     int totalDisks = nodes.size();
-    int maxStripes = 1000; 
+    int maxStripes = 16;//PdfaBit::getMaxStripeIndex(nodes); 
     std::vector<uint8_t> fullData;
 
     for (int stripe = 0; stripe < maxStripes; ++stripe) {
@@ -174,7 +174,7 @@ bool Raid5Controller::rebuildOriginalFile(const std::string& outputPath) {
 
 bool Raid5Controller::rebuildPdfFromDisks(const std::string& outputFilename) {
     int totalDisks = nodes.size();
-    int maxStripes = 1000;
+    int maxStripes = 17;//PdfaBit::getMaxStripeIndex(nodes);
     std::vector<std::vector<uint8_t>> fullData;
 
     for (int stripe = 0; stripe < maxStripes; ++stripe) {
@@ -237,6 +237,8 @@ bool Raid5Controller::rebuildPdfFromDisks(const std::string& outputFilename) {
 
     std::cout << "PDF reconstruido con éxito: " << outputFilename << std::endl;
     return true;
+
+
 }
 
 

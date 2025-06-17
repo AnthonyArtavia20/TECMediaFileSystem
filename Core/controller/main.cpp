@@ -10,30 +10,26 @@ int main(int argc, char* argv[]) {
 
     std::string inputFile = argv[1];
     std::string outputFile = "output/recuperado.pdf";
-    std::filesystem::create_directory("output");
 
+    std::filesystem::create_directory("output");
+    std::filesystem::remove(outputFile);  //eliminar archivo ya creado
 
     try {
         Raid5Controller controller(4096);
 
-        bool recovered = controller.recoverMissingBlocks();
-        if (recovered) {
-            std::cerr << "Se reconstruyó al menos un bloque perdido.\n";
-        } else {
-            // Verificar si el archivo ya había sido guardado anteriormente
-            if (!std::filesystem::exists(outputFile)) {
-                std::cout << "Archivo no encontrado, procediendo a almacenar en nodos...\n";
-                controller.storeFile(inputFile);
-            } else {
-                std::cout << "No hay bloques perdidos y el archivo ya fue reconstruido previamente.\n";
-            }
-        }
+        controller.storeFile(argv[1]);
+        std::cout << "Archivo almacenado usando RAID 5.\n";
 
-        controller.rebuildOriginalFile(outputFile);
+        controller.recoverMissingBlocks();
+
+        if (controller.rebuildPdfFromDisks(outputFile)) {
+            std::cout << "PDF reconstruido correctamente.\n";
+        } else {
+            std::cerr << "Error al reconstruir el archivo PDF.\n";
+        }
 
     } catch (const std::exception& ex) {
         std::cerr << "Error: " << ex.what() << std::endl;
-        return 1;
     }
 
     return 0;
