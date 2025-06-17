@@ -18,13 +18,13 @@ int main(int argc, char* argv[]) {
         Raid5Controller controller(4096);
 
         controller.storeFile(argv[1]);
-        std::cout << "Archivo almacenado usando RAID 5.\n";
 
-        controller.recoverMissingBlocks();
-
-        if (controller.rebuildPdfFromDisks(outputFile)) {
-            std::cout << "PDF reconstruido correctamente.\n";
-        } else {
+        
+        if (controller.recoverMissingBlocks()) {
+            std::cerr << "Se reconstruyo un bloque.\n";
+        }
+        
+        if (!controller.rebuildPdfFromDisks(outputFile)) {
             std::cerr << "Error al reconstruir el archivo PDF.\n";
         }
 

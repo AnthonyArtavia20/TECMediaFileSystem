@@ -107,81 +107,15 @@ bool Raid5Controller::recoverMissingBlocks() {
     return reconstructedBlock;
 }
 
-bool Raid5Controller::rebuildOriginalFile(const std::string& outputPath) {
-    int totalDisks = nodes.size();
-    int maxStripes = 16;//PdfaBit::getMaxStripeIndex(nodes); 
-    std::vector<uint8_t> fullData;
-
-    for (int stripe = 0; stripe < maxStripes; ++stripe) {
-        int missingIndex = -1;
-        std::vector<std::vector<uint8_t>> presentBlocks(totalDisks);
-
-        // Leer todos los bloques del stripe
-        for (int i = 0; i < totalDisks; ++i) {
-            try {
-                presentBlocks[i] = PdfaBit::readBlock(nodes[i], stripe);
-                if (presentBlocks[i].empty()) missingIndex = i;
-            } catch (...) {
-                missingIndex = i;
-            }
-        }
-
-        // Contar los bloques faltantes
-        int missingCount = 0;
-        for (const auto& b : presentBlocks) {
-            if (b.empty()) ++missingCount;
-        }
-
-        if (missingCount > 1) {
-            std::cerr << "No se puede reconstruir el stripe " << stripe << ": faltan múltiples bloques." << std::endl;
-            return false;
-        }
-
-        std::vector<uint8_t> dataBlock;
-
-        if (missingCount == 1 && missingIndex != -1) {
-            std::vector<std::vector<uint8_t>> available;
-            for (int i = 0; i < totalDisks; ++i) {
-                if (i != missingIndex) available.push_back(presentBlocks[i]);
-            }
-            dataBlock = PdfaBit::recoverBlockUsingParity(available);
-            std::cerr << "Bloque reconstruido en stripe " << stripe << " desde paridad." << std::endl;
-        } else {
-            // Tomar el bloque de datos 
-            for (int i = 0; i < totalDisks; ++i) {
-                if (!presentBlocks[i].empty()) {
-                    dataBlock = presentBlocks[i];
-                    break;
-                }
-            }
-        }
-
-        fullData.insert(fullData.end(), dataBlock.begin(), dataBlock.end());
-    }
-
-    // Se reconstruye el archivo
-    std::ofstream out(outputPath, std::ios::binary);
-    if (!out) {
-        std::cerr << "No se pudo crear el archivo de salida." << std::endl;
-        return false;
-    }
-    out.write(reinterpret_cast<const char*>(fullData.data()), fullData.size());
-    out.close();
-
-    std::cout << "Archivo reconstruido exitosamente en: " << outputPath << std::endl;
-    return true;
-}
-
 bool Raid5Controller::rebuildPdfFromDisks(const std::string& outputFilename) {
     int totalDisks = nodes.size();
-    int maxStripes = 17;//PdfaBit::getMaxStripeIndex(nodes);
+    int maxStripes = 17;
     std::vector<std::vector<uint8_t>> fullData;
 
     for (int stripe = 0; stripe < maxStripes; ++stripe) {
         int missingIndex = -1;
         std::vector<std::vector<uint8_t>> presentBlocks(totalDisks);
 
-        // Leer todos los bloques en el stripe
         for (int i = 0; i < totalDisks; ++i) {
             try {
                 presentBlocks[i] = PdfaBit::readBlock(nodes[i], stripe);
@@ -191,7 +125,6 @@ bool Raid5Controller::rebuildPdfFromDisks(const std::string& outputFilename) {
             }
         }
 
-        // Verificamos cuántos bloques faltan
         int missingCount = 0;
         for (const auto& block : presentBlocks) {
             if (block.empty()) ++missingCount;
@@ -209,9 +142,12 @@ bool Raid5Controller::rebuildPdfFromDisks(const std::string& outputFilename) {
             }
             auto recovered = PdfaBit::recoverBlockUsingParity(available);
             presentBlocks[missingIndex] = recovered;
+
+            std::cerr << "Bloque reconstruido en stripe " << stripe
+                    << " del nodo " << missingIndex << " desde paridad." << std::endl;
         }
 
-        // Añadir todos los bloques de datos (no paridad) al PDF final
+
         int parityIndex = stripe % totalDisks;
         for (int i = 0; i < totalDisks; ++i) {
             if (i != parityIndex) {
@@ -220,13 +156,11 @@ bool Raid5Controller::rebuildPdfFromDisks(const std::string& outputFilename) {
         }
     }
 
-    // Unir todos los bloques en un solo vector
     std::vector<uint8_t> reconstructedPdf;
     for (const auto& block : fullData) {
         reconstructedPdf.insert(reconstructedPdf.end(), block.begin(), block.end());
     }
 
-    // Guardar como PDF
     std::ofstream out(outputFilename, std::ios::binary);
     if (!out) {
         std::cerr << "Error al crear el archivo PDF de salida." << std::endl;
@@ -237,9 +171,4 @@ bool Raid5Controller::rebuildPdfFromDisks(const std::string& outputFilename) {
 
     std::cout << "PDF reconstruido con éxito: " << outputFilename << std::endl;
     return true;
-
-
 }
-
-
-
