@@ -17,12 +17,14 @@ int main(int argc, char* argv[]) {
     try {
         Raid5Controller controller(4096);
 
-        controller.storeFile(inputFile);
+        
 
         bool recovered = controller.recoverMissingBlocks();
         if (recovered) {
             std::cerr << "Se reconstruyó al menos un bloque perdido.\n";
-        } 
+        } else{
+            controller.storeFile(inputFile);
+        }
 
         // Reconstruir el archivo PDF desde los nodos
         if (controller.rebuildPdfFromDisks(outputFile)) {
