@@ -1,12 +1,6 @@
 #!/bin/bash
 set -e  # Detiene el script si ocurre un error
 
-# Verifica si se pasa un archivo como argumento
-if [ -z "$1" ]; then
-  echo "Uso: ./run_project.sh archivo1.pdf [archivo2.pdf ...]"
-  exit 1
-fi
-
 #Eliminando la carpeta build para evitar errores del build anterior
 echo "Borrando carpeta build"
 rm -rf build

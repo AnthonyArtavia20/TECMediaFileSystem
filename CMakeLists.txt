@@ -10,9 +10,9 @@ add_executable(TECMFS-Disk ${DISK_SOURCES})
 target_include_directories(TECMFS-Disk PRIVATE Core/disk_node)
 
 # -------- Controller Node -----------------
-file(GLOB_RECURSE CTRL_SOURCES Core/controller/*.cpp)
+file(GLOB_RECURSE CTRL_SOURCES Core/controller/*.cpp Core/http/*.cpp)
 add_executable(TECMFS-Controller ${CTRL_SOURCES})
-target_include_directories(TECMFS-Controller PRIVATE Core/controller)
+target_include_directories(TECMFS-Controller PRIVATE Core/controller Core/http)
 
 # -------- pugixml --------
 if(APPLE)
