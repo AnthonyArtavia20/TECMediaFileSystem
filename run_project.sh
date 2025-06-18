@@ -1,21 +1,41 @@
 #!/bin/bash
+set -e  # Detiene el script si ocurre un error
 
-## Verifica si se pasa un archivo como argumento
-#if [ -z "$1" ]; then
-#  echo "Uso: ./run_project.sh archivo.pdf"
-#  exit 1
-#fi
+# Verifica si se pasa un archivo como argumento
+if [ -z "$1" ]; then
+  echo "Uso: ./run_project.sh archivo1.pdf [archivo2.pdf ...]"
+  exit 1
+fi
+
+#Eliminando la carpeta build para evitar errores del build anterior
+echo "Borrando carpeta build"
+rm -rf build
 
 # Crear carpeta para binarios de c++
 echo "Compilando la vaina a ver si funciona"
 cmake -B build -S .
 cmake --build build
 
+# Obtener rutas absolutas de los PDFs
+PDFS=()
+for f in "$@"; do
+  if [ ! -f "$f" ]; then
+    echo "Error: El archivo $f no existe"
+    exit 1
+  fi
+  PDFS+=("$(realpath "$f")")
+done
+
 echo "Iniciando disk node..."
 ./build/TECMFS-Disk &
 
-echo "Iniciando controller..."
-./build/TECMFS-Controller &
+echo "Iniciando controller con PDFs: ${PDFS[*]}"
+cd build
+./TECMFS-Controller "${PDFS[@]}" &
+cd ..
+
+# Espera unos segundos por si los procesos necesitan tiempo
+sleep 2
 
 echo "Ejecutando GUI en Python..."
 cd GUI

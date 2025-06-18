@@ -15,7 +15,7 @@ Disk_Node::Disk_Node(const std::string& configPath) {
 void Disk_Node::loadConfig(const std::string& configPath) {
     pugi::xml_document doc;
     if (!doc.load_file(configPath.c_str())) {
-        throw std::runtime_error("Error loading config.xml");
+        throw std::runtime_error("Error cargando el archivo: " + configPath);
     }
 
     auto root = doc.child("DiskNode");

@@ -1,23 +1,28 @@
 // Punto de entrada del Disk Node
 #include "disk_node.h"
+#include <filesystem>
 #include <iostream>
+using namespace std;
 
 int main() {
     try {
 
+        string basePath = filesystem::current_path().string(); //para obtener la ruta actual donde se ejcuta el programa
+
+
         // creacion de los disk nodes donde se almacenaran los bits
-        Disk_Node disk_node1("../Core/config/disk1.xml");
+        // Construir rutas absolutas a los XML
+        Disk_Node disk_node1(basePath + "/Core/config/disk1.xml");
         disk_node1.initializeStorage();
-        //disk_node1.printInfo();
-        Disk_Node disk_node2("../Core/config/disk2.xml");
+
+        Disk_Node disk_node2(basePath + "/Core/config/disk2.xml");
         disk_node2.initializeStorage();
-        //disk_node2.printInfo();
-        Disk_Node disk_node3("../Core/config/disk3.xml");
+
+        Disk_Node disk_node3(basePath + "/Core/config/disk3.xml");
         disk_node3.initializeStorage();
-        //disk_node3.printInfo();
-        Disk_Node disk_node4("../Core/config/disk4.xml");
+
+        Disk_Node disk_node4(basePath + "/Core/config/disk4.xml");
         disk_node4.initializeStorage();
-        //disk_node4.printInfo();
 
     } catch (const std::exception& e) {
         std::cerr << "Error: " << e.what() << std::endl;
