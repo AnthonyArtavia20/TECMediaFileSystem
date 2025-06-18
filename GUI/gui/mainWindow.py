@@ -80,9 +80,7 @@ class TecMFSApp(tk.Tk):
         self.populate_dummy_files()
 
     def populate_dummy_files(self):
-        files = [("informe.pdf", "2.1 MB", "2025-06-04","Descargar | Eliminar"),
-                 ("foto.jpg", "5.4 MB", "2025-06-03","Descargar | Eliminar"),
-                 ("datos.txt", "0.4 MB", "2025-06-01","Descargar | Eliminar")]
+        files = [] #Those files that are going to be uploaded into the app will apear here
         for name, size, date,actions in files:
             self.file_table.insert("", "end", values=(name, size, date, actions))
 

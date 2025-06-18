@@ -5,6 +5,7 @@
 
 #include <pugixml.hpp>
 #include <filesystem>
+#include <algorithm>
 
 Raid5Controller::Raid5Controller(size_t blockSize) : blockSize(blockSize) {
     std::vector<std::string> configFiles = {

@@ -3,8 +3,6 @@ file(REMOVE_RECURSE
   "CMakeFiles/TECMFS-Disk.dir/Core/disk_node/disk_node.cpp.o.d"
   "CMakeFiles/TECMFS-Disk.dir/Core/disk_node/main.cpp.o"
   "CMakeFiles/TECMFS-Disk.dir/Core/disk_node/main.cpp.o.d"
-  "CMakeFiles/TECMFS-Disk.dir/Core/disk_node/storage_manager.cpp.o"
-  "CMakeFiles/TECMFS-Disk.dir/Core/disk_node/storage_manager.cpp.o.d"
   "TECMFS-Disk"
   "TECMFS-Disk.pdb"
 )

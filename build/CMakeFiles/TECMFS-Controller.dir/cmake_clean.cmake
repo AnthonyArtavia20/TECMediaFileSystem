@@ -1,6 +1,4 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/TECMFS-Controller.dir/Core/controller/calculoParidad.cpp.o"
-  "CMakeFiles/TECMFS-Controller.dir/Core/controller/calculoParidad.cpp.o.d"
   "CMakeFiles/TECMFS-Controller.dir/Core/controller/controller.cpp.o"
   "CMakeFiles/TECMFS-Controller.dir/Core/controller/controller.cpp.o.d"
   "CMakeFiles/TECMFS-Controller.dir/Core/controller/main.cpp.o"

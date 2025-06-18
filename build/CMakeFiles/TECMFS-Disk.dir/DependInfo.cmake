@@ -8,9 +8,8 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/Users/sergiodanielalvarezchanto/Desktop/TECMediaFileSystem/Core/disk_node/disk_node.cpp" "CMakeFiles/TECMFS-Disk.dir/Core/disk_node/disk_node.cpp.o" "gcc" "CMakeFiles/TECMFS-Disk.dir/Core/disk_node/disk_node.cpp.o.d"
-  "/Users/sergiodanielalvarezchanto/Desktop/TECMediaFileSystem/Core/disk_node/main.cpp" "CMakeFiles/TECMFS-Disk.dir/Core/disk_node/main.cpp.o" "gcc" "CMakeFiles/TECMFS-Disk.dir/Core/disk_node/main.cpp.o.d"
-  "/Users/sergiodanielalvarezchanto/Desktop/TECMediaFileSystem/Core/disk_node/storage_manager.cpp" "CMakeFiles/TECMFS-Disk.dir/Core/disk_node/storage_manager.cpp.o" "gcc" "CMakeFiles/TECMFS-Disk.dir/Core/disk_node/storage_manager.cpp.o.d"
+  "/home/anthony/Documents/Datos2/Proyetos/Proyecto3_TECMEDIAFILESYSTEM/TecMediaFileSystem/Core/disk_node/disk_node.cpp" "CMakeFiles/TECMFS-Disk.dir/Core/disk_node/disk_node.cpp.o" "gcc" "CMakeFiles/TECMFS-Disk.dir/Core/disk_node/disk_node.cpp.o.d"
+  "/home/anthony/Documents/Datos2/Proyetos/Proyecto3_TECMEDIAFILESYSTEM/TecMediaFileSystem/Core/disk_node/main.cpp" "CMakeFiles/TECMFS-Disk.dir/Core/disk_node/main.cpp.o" "gcc" "CMakeFiles/TECMFS-Disk.dir/Core/disk_node/main.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

@@ -3,8 +3,8 @@
 #include <iostream>
 #include <fstream>
 #include <filesystem>
+#include <vector>
 #include "pugixml.hpp"
-
 
 
 Disk_Node::Disk_Node(const std::string& configPath) {

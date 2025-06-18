@@ -8,9 +8,8 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/Users/sergiodanielalvarezchanto/Desktop/TECMediaFileSystem/Core/controller/calculoParidad.cpp" "CMakeFiles/TECMFS-Controller.dir/Core/controller/calculoParidad.cpp.o" "gcc" "CMakeFiles/TECMFS-Controller.dir/Core/controller/calculoParidad.cpp.o.d"
-  "/Users/sergiodanielalvarezchanto/Desktop/TECMediaFileSystem/Core/controller/controller.cpp" "CMakeFiles/TECMFS-Controller.dir/Core/controller/controller.cpp.o" "gcc" "CMakeFiles/TECMFS-Controller.dir/Core/controller/controller.cpp.o.d"
-  "/Users/sergiodanielalvarezchanto/Desktop/TECMediaFileSystem/Core/controller/main.cpp" "CMakeFiles/TECMFS-Controller.dir/Core/controller/main.cpp.o" "gcc" "CMakeFiles/TECMFS-Controller.dir/Core/controller/main.cpp.o.d"
+  "/home/anthony/Documents/Datos2/Proyetos/Proyecto3_TECMEDIAFILESYSTEM/TecMediaFileSystem/Core/controller/controller.cpp" "CMakeFiles/TECMFS-Controller.dir/Core/controller/controller.cpp.o" "gcc" "CMakeFiles/TECMFS-Controller.dir/Core/controller/controller.cpp.o.d"
+  "/home/anthony/Documents/Datos2/Proyetos/Proyecto3_TECMEDIAFILESYSTEM/TecMediaFileSystem/Core/controller/main.cpp" "CMakeFiles/TECMFS-Controller.dir/Core/controller/main.cpp.o" "gcc" "CMakeFiles/TECMFS-Controller.dir/Core/controller/main.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.
