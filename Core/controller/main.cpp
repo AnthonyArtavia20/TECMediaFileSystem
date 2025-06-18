@@ -1,6 +1,7 @@
 #include "controller.h"
 #include <iostream>
 #include <filesystem>
+using namespace std;
 
 int main(int argc, char* argv[]) {
     if (argc < 2) {
@@ -8,13 +9,15 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    std::filesystem::create_directory("output");
+    string basePath = filesystem::current_path().string(); //para obtener la ruta actual donde se ejcuta el programa
+    basePath = basePath + "/../Core/storage/";
+    std::filesystem::create_directory(basePath + "output/");
+
     Raid5Controller controller(4096);
-    
 
     for (int i = 1; i < argc; ++i) {
         std::string inputFile = argv[i];
-        std::string outputFile = "output/" + std::filesystem::path(inputFile).stem().string() + ".pdf";
+        std::string outputFile = basePath + "output/" + std::filesystem::path(inputFile).stem().string() + ".pdf";
         std::filesystem::remove(outputFile);  // eliminar pdf viejo
         std::string filename = std::filesystem::path(inputFile).stem().string();
 

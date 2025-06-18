@@ -1,3 +1,32 @@
+# C++ y CMake
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+Makefile
+*.o
+*.obj
+*.so
+*.a
+*.out
+*.exe
+*.log
+
+# Entorno virtual de Python
 .venv/
+env/
+ENV/
+venv/
+*.egg-info/
+
+# Python bytecode
 __pycache__/
-*.pyc
+*.py[cod]
+
+# Archivos temporales o del editor
+*.swp
+*.swo
+*~
+.vscode/
+.idea/
+.DS_Store
