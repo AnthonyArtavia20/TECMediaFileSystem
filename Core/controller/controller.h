@@ -11,8 +11,6 @@ public:
     bool recoverMissingBlocks(const std::string& filename);
     bool rebuildPdfFromDisks(const std::string& filename, const std::string& outputFilename);
 
-
-
 private:
     size_t blockSize;
     std::vector<std::string> nodes;
