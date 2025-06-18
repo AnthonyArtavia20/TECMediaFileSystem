@@ -1,12 +1,15 @@
 #include "controller.h"
+#include "Raid5HTTPServer.h"
 #include <iostream>
 #include <filesystem>
+#include <thread>
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    if (argc < 2) {
-        std::cerr << "Uso: ./controller archivo1.pdf archivo2.pdf ...\n";
-        return 1;
+
+    if (argc == 1) {
+    std::cout << "Esperando conexiones desde la GUI en http://localhost:8080\n";
+    std::cout << "Ya no se admiten archivos por línea de comandos.\n";
     }
 
     string basePath = filesystem::current_path().string(); //para obtener la ruta actual donde se ejcuta el programa
@@ -14,6 +17,13 @@ int main(int argc, char* argv[]) {
     std::filesystem::create_directory(basePath + "output/");
 
     Raid5Controller controller(4096);
+
+    //Inicializacióan y conexión del servidor HTTP embebido
+    cout << "Servidor HTTP embebido corriendo en http://localhost:8080\n";
+    std::thread http_thread([&controller]() {
+        Raid5HTTPServer server(&controller);
+        server.start(8080); //server corriendo paralelo
+    });
 
     for (int i = 1; i < argc; ++i) {
         std::string inputFile = argv[i];
@@ -40,5 +50,6 @@ int main(int argc, char* argv[]) {
         }
     }
 
+    http_thread.join(); //Para que no haga otra cosa hasta que termine
     return 0;
 }
