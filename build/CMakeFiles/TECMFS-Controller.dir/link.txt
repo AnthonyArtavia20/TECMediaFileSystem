@@ -1,1 +1,0 @@
-/usr/bin/c++ "CMakeFiles/TECMFS-Controller.dir/Core/controller/controller.cpp.o" "CMakeFiles/TECMFS-Controller.dir/Core/controller/main.cpp.o" -o TECMFS-Controller  /usr/lib/x86_64-linux-gnu/libpugixml.so 

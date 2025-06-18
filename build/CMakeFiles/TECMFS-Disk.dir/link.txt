@@ -1,1 +1,0 @@
-/usr/bin/c++ "CMakeFiles/TECMFS-Disk.dir/Core/disk_node/disk_node.cpp.o" "CMakeFiles/TECMFS-Disk.dir/Core/disk_node/main.cpp.o" -o TECMFS-Disk  /usr/lib/x86_64-linux-gnu/libpugixml.so 

@@ -1,4 +1,0 @@
-/home/anthony/Documents/Datos2/Proyetos/Proyecto3_TECMEDIAFILESYSTEM/TecMediaFileSystem/build/CMakeFiles/TECMFS-Disk.dir
-/home/anthony/Documents/Datos2/Proyetos/Proyecto3_TECMEDIAFILESYSTEM/TecMediaFileSystem/build/CMakeFiles/TECMFS-Controller.dir
-/home/anthony/Documents/Datos2/Proyetos/Proyecto3_TECMEDIAFILESYSTEM/TecMediaFileSystem/build/CMakeFiles/edit_cache.dir
-/home/anthony/Documents/Datos2/Proyetos/Proyecto3_TECMEDIAFILESYSTEM/TecMediaFileSystem/build/CMakeFiles/rebuild_cache.dir
