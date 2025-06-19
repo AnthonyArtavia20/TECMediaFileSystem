@@ -9,6 +9,8 @@ from PIL import ImageTk, Image
 from tkinter import ttk, filedialog, messagebox
 from datetime import datetime
 
+#import requests descomentar esto cuadno sirva la GUI
+
 from utils.formatUtils import format_bytes
 
 class TecMFSApp(tk.Tk):
@@ -22,6 +24,9 @@ class TecMFSApp(tk.Tk):
         self.create_file_table()
         self.create_controls()
 
+        # Iniciar actualización periódica del estado del RAID
+        #self.after(1000, self.actualizar_estado_raid_periodicamente)
+
     def logoAndTitlePanel(self):
         information_frame = tk.Frame(self, bg="#f2f2f2", pady=8)
         information_frame.pack(fill=tk.X, padx=10)
@@ -34,12 +39,15 @@ class TecMFSApp(tk.Tk):
         tk.Label(information_frame, text="TEC Media File System App", font=("Arial", 15, "bold"), bg="#f2f2f2").pack(anchor="w")
 
         #logo
-        image1Logo = Image.open("gui/assets/logo.png")
-        image1Logo = image1Logo.resize((110,110), Image.LANCZOS)
-        self.logo_image = ImageTk.PhotoImage(image1Logo)
-        logo_label = tk.Label(information_frame, image=self.logo_image, bg="#f2f2f2")
-        logo_label.pack(side=tk.LEFT, padx=(0, 20))
-        logo_label.pack(anchor="w")
+        #image1Logo = Image.open("gui/assets/logo.png")
+        #image1Logo = image1Logo.resize((110,110), Image.LANCZOS)
+        #self.logo_image = ImageTk.PhotoImage(image1Logo)
+        #logo_label = tk.Label(information_frame, image=self.logo_image, bg="#f2f2f2")
+        #logo_label.pack(side=tk.LEFT, padx=(0, 20))
+        #logo_label.pack(anchor="w")
+
+        tk.Label(left_frame, text="[LOGO]", bg="#f2f2f2").pack(side=tk.LEFT, padx=10)
+
 
         #Sub-frame derecho para estado del RAID
         right_frame = tk.Frame(information_frame, bg="#f2f2f2")
@@ -146,3 +154,24 @@ class TecMFSApp(tk.Tk):
         dialog.destroy()
         print(f"Eliminando '{filename}'... (simulado)")
         messagebox.showwarning("Eliminar", f"Archivo '{filename}' eliminado (simulado)")
+
+if __name__ == "__main__":
+    app = TecMFSApp()
+    app.mainloop()
+
+
+    #def actualizar_estado_raid(self):
+    #        try:
+    #            response = requests.get("http://localhost:8080/status")
+    #            if response.ok:
+    #                data = response.json()
+    #                estado = data.get("status", "DESCONOCIDO")
+    #                color = {"OK": "green", "DEGRADED": "orange", "FAILED": "red"}.get(estado, "black")
+    #                self.estado_label.config(text=f"Estado: {estado}", fg=color)
+    #        except Exception as e:
+    #            print("Error al obtener estado RAID:", e)
+    #            self.estado_label.config(text="Estado: Error", fg="red")
+#
+    #def actualizar_estado_raid_periodicamente(self):
+    #    self.actualizar_estado_raid()
+    #    self.after(5000, self.actualizar_estado_raid_periodicamente)

@@ -14,5 +14,4 @@ private:
   httplib::Server server;
   Raid5Controller* controller; //Instancia de la clase del Controller(metétodos de recuperación, almacenamiento y reconstrucción de PDFS)
   void setup_routes(); //método que settea las oepraciones JSON que se enviaran y recibirán.
-
 };

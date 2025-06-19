@@ -1,5 +1,5 @@
 #include "controller.h"
-#include "Raid5HTTPServer.h"
+#include "../http/Raid5HTTPServer.h"
 #include <iostream>
 #include <filesystem>
 #include <thread>
@@ -14,16 +14,24 @@ int main(int argc, char* argv[]) {
 
     string basePath = filesystem::current_path().string(); //para obtener la ruta actual donde se ejcuta el programa
     basePath = basePath + "/../Core/storage/";
-    std::filesystem::create_directory(basePath + "output/");
+    std::filesystem::create_directories(basePath + "output/");
 
     Raid5Controller controller(4096);
 
     //Inicializacióan y conexión del servidor HTTP embebido
     cout << "Servidor HTTP embebido corriendo en http://localhost:8080\n";
     std::thread http_thread([&controller]() {
+    std::cout << "[DEBUG] Iniciando hilo del servidor HTTP...\n";
+    try {
         Raid5HTTPServer server(&controller);
-        server.start(8080); //server corriendo paralelo
-    });
+        server.start(8080);
+        std::cout << "[DEBUG] Servidor HTTP finalizó correctamente (esto no debería pasar normalmente).\n";
+    } catch (const std::exception& ex) {
+        std::cerr << "[ERROR] Excepción en el servidor HTTP: " << ex.what() << "\n";
+    } catch (...) {
+        std::cerr << "[ERROR] Excepción desconocida en el servidor HTTP.\n";
+    }
+});
 
     for (int i = 1; i < argc; ++i) {
         std::string inputFile = argv[i];
@@ -33,6 +41,7 @@ int main(int argc, char* argv[]) {
 
         try {
             std::cout << "\nProcesando archivo: " << inputFile << std::endl;
+            std::cout << "[DEBUG] Iniciando hilo del servidor HTTP...\n";
 
             bool recovered = controller.recoverMissingBlocks(filename);
             if (recovered) {
