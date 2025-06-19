@@ -1,3 +1,2 @@
-pillow==11.2.1
 pugixml
 requests==2.31.0

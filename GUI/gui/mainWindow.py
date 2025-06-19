@@ -5,9 +5,10 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../")))
 
 import tkinter as tk
 
-from PIL import ImageTk, Image
 from tkinter import ttk, filedialog, messagebox
 from datetime import datetime
+
+import requests
 
 from utils.formatUtils import format_bytes
 
@@ -22,6 +23,9 @@ class TecMFSApp(tk.Tk):
         self.create_file_table()
         self.create_controls()
 
+        # Iniciar actualización periódica del estado del RAID
+        self.after(1000, self.actualizar_estado_raid_periodicamente)
+
     def logoAndTitlePanel(self):
         information_frame = tk.Frame(self, bg="#f2f2f2", pady=8)
         information_frame.pack(fill=tk.X, padx=10)
@@ -34,9 +38,7 @@ class TecMFSApp(tk.Tk):
         tk.Label(information_frame, text="TEC Media File System App", font=("Arial", 15, "bold"), bg="#f2f2f2").pack(anchor="w")
 
         #logo
-        image1Logo = Image.open("gui/assets/logo.png")
-        image1Logo = image1Logo.resize((110,110), Image.LANCZOS)
-        self.logo_image = ImageTk.PhotoImage(image1Logo)
+        self.logo_image = tk.PhotoImage(file="gui/assets/logo.png")
         logo_label = tk.Label(information_frame, image=self.logo_image, bg="#f2f2f2")
         logo_label.pack(side=tk.LEFT, padx=(0, 20))
         logo_label.pack(anchor="w")
@@ -146,3 +148,19 @@ class TecMFSApp(tk.Tk):
         dialog.destroy()
         print(f"Eliminando '{filename}'... (simulado)")
         messagebox.showwarning("Eliminar", f"Archivo '{filename}' eliminado (simulado)")
+
+    def actualizar_estado_raid(self):
+            try:
+                response = requests.get("http://localhost:8080/status")
+                if response.ok:
+                    data = response.json()
+                    estado = data.get("status", "DESCONOCIDO")
+                    color = {"OK": "green", "DEGRADED": "orange", "FAILED": "red"}.get(estado, "black")
+                    self.estado_label.config(text=f"Estado: {estado}", fg=color)
+            except Exception as e:
+                print("Error al obtener estado RAID:", e)
+                self.estado_label.config(text="Estado: Error", fg="red")
+
+    def actualizar_estado_raid_periodicamente(self):
+        self.actualizar_estado_raid()
+        self.after(5000, self.actualizar_estado_raid_periodicamente)

@@ -22,16 +22,17 @@ done
 
 echo "Iniciando disk node..."
 ./build/TECMFS-Disk &
+sleep 1
 
 echo "Iniciando controller con PDFs: ${PDFS[*]}"
-cd build
-./TECMFS-Controller "${PDFS[@]}" &
-cd ..
+./build/TECMFS-Controller "${PDFS[@]}"
+
+sleep 1
 
 # Espera unos segundos por si los procesos necesitan tiempo
 sleep 2
 
-echo "Ejecutando GUI en Python..."
-cd GUI
-source ../.venv/bin/activate
-python3 main.py
+#echo "Ejecutando GUI en Python..."
+#cd GUI
+#source ../.venv/bin/activate
+#exec python3 main.py

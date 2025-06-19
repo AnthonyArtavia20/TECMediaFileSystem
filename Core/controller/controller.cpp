@@ -8,11 +8,13 @@
 #include <algorithm>
 
 Raid5Controller::Raid5Controller(size_t blockSize) : blockSize(blockSize) {
+    std::string baseConfigPath = std::filesystem::current_path().string() + "/Core/config/";
+
     std::vector<std::string> configFiles = {
-        "../Core/config/disk1.xml",
-        "../Core/config/disk2.xml",
-        "../Core/config/disk3.xml",
-        "../Core/config/disk4.xml"
+        baseConfigPath + "disk1.xml",
+        baseConfigPath + "disk2.xml",
+        baseConfigPath + "disk3.xml",
+        baseConfigPath + "disk4.xml"
     };
 
     for (int i = 0; i < configFiles.size(); ++i) {
@@ -22,7 +24,11 @@ Raid5Controller::Raid5Controller(size_t blockSize) : blockSize(blockSize) {
         }
         std::string path = doc.child("DiskNode").child("StoragePath").text().as_string();
         nodes.push_back(path);
-        diskStates[i] = true;
+        diskStates[i + 1] = true;
+    }
+    std::cout << "[DEBUG] Discos cargados: " << nodes.size() << std::endl;
+    for (int i = 0; i < nodes.size(); ++i) {
+        std::cout << " - Disco " << (i + 1) << " => " << nodes[i] << std::endl;
     }
 }
 
@@ -170,21 +176,19 @@ void Raid5Controller::setBlockSize(size_t newBlockSize) {
 }
 
 //Métodos para saber el estado de los RAIDS;
-void Raid5Controller::startDisk(int disk_id) {
-    if (diskStates.count(disk_id)) {
-        diskStates[disk_id] = true;
-        std::cout << "Disco " << disk_id << " encendido." << std::endl;
-    } else {
-        std::cerr << "Disco " << disk_id << " no existe.\n";
+void Raid5Controller::startDisk(int id) {
+    if (id > 0 && id <= (int)diskStates.size()) {
+        std::cout << "[DEBUG] startDisk(" << id << ")\n";
+        std::cout << "[DEBUG] Estado actual de disco " << id << ": " << std::boolalpha << diskStates[id - 1] << std::endl;
+        diskStates[id - 1] = true;
     }
 }
 
-void Raid5Controller::stopDisk(int disk_id) {
-    if (diskStates.count(disk_id)) {
-        diskStates[disk_id] = false;
-        std::cout << "Disco " << disk_id << " apagado." << std::endl;
-    } else {
-        std::cerr << "Disco " << disk_id << " no existe.\n";
+void Raid5Controller::stopDisk(int id) {
+    if (id > 0 && id <= (int)diskStates.size()) {
+        std::cout << "[DEBUG] stopDisk(" << id << ")\n";
+        std::cout << "[DEBUG] Estado actual de disco " << id << ": " << std::boolalpha << diskStates[id - 1] << std::endl;
+        diskStates[id - 1] = false;
     }
 }
 
@@ -192,12 +196,20 @@ void Raid5Controller::setDiskState(int id, bool active) {
     if (diskStates.count(id)) {
         diskStates[id] = active;
         std::cout << "Disco " << id << (active ? " activado" : " desactivado") << "." << std::endl;
+    } else {
+        std::cerr << "[ERROR] ID de disco inválido: " << id << std::endl;
     }
 }
 
 bool Raid5Controller::getDiskState(int id) const {
     auto it = diskStates.find(id);
-    return it != diskStates.end() ? it->second : false;
+    if (it != diskStates.end()) {
+        std::cout << "[DEBUG] getDiskState(" << id << ") = " << std::boolalpha << it->second << std::endl;
+        return it->second;
+    } else {
+        std::cerr << "[DEBUG] getDiskState(" << id << ") = NOT FOUND" << std::endl;
+        return false;
+    }
 }
 
 int Raid5Controller::getActiveDiskCount() const {
@@ -206,4 +218,8 @@ int Raid5Controller::getActiveDiskCount() const {
         if (state) ++count;
     }
     return count;
+}
+
+int Raid5Controller::getDiskCount() const {
+    return nodes.size();
 }

@@ -21,6 +21,7 @@ public:
     void setDiskState(int id, bool active);
     bool getDiskState(int id) const;
     int getActiveDiskCount() const;
+    int getDiskCount() const;
 
 private:
     size_t blockSize;
