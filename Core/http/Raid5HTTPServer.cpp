@@ -73,7 +73,7 @@ void Raid5HTTPServer::setup_routes() {
             controller->storeFile(temp_path);
 
             // Reconstruir en /tmp para tener el PDF entero accesible
-            std::string reconstructed = "/tmp/" + filename;
+            std::string reconstructed = "Core/storage/output/" + filename + ".pdf";
             bool ok = controller->rebuildPdfFromDisks(filename, reconstructed);
 
             if (ok) {

@@ -36,17 +36,18 @@ std::vector<uint8_t> PdfaBit::reconstructFromBlocks(const std::vector<std::vecto
 
 // ---- logica para pasar la informacion al controller ---
 
-// Escribir los bloques que se le pasan al controlador 
+// Escribir los bloques que se le pasan al controlador
 void PdfaBit::writeBlock(const std::string& path, const std::string& filename, int stripeIndex, const std::vector<uint8_t>& data) {
-    std::filesystem::create_directories(path + "/" + filename);
-    std::string filepath = path + "/" + filename + "/block_" + std::to_string(stripeIndex) + ".bin";
+    std::filesystem::create_directories(path);  // Solo asegúrate que el disco exista
+    std::string filepath = path + "/block_" + filename + "_" + std::to_string(stripeIndex) + ".bin";
     std::ofstream out(filepath, std::ios::binary);
     out.write(reinterpret_cast<const char*>(data.data()), data.size());
 }
 
-// Leer los bloques que se le pasan al controlador 
+
+// Leer los bloques que se le pasan al controlador
 std::vector<uint8_t> PdfaBit::readBlock(const std::string& nodePath, const std::string& filename, int index) {
-    std::string filepath = nodePath + "/" + filename + "/block_" + std::to_string(index) + ".bin";
+    std::string filepath = nodePath + "/block_" + filename + "_" + std::to_string(index) + ".bin";
     return readFile(filepath);
 }
 

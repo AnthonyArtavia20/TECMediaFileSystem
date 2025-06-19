@@ -22,16 +22,22 @@ Raid5Controller::Raid5Controller(size_t blockSize) : blockSize(blockSize) {
         if (!doc.load_file(configFiles[i].c_str())) {
             throw std::runtime_error("No se pudo cargar el archivo: " + configFiles[i]);
         }
-        std::string path = doc.child("DiskNode").child("StoragePath").text().as_string();
-        nodes.push_back(path);
+
+        std::string rawPath = doc.child("DiskNode").child("StoragePath").text().as_string();
+
+        // Esto fuerza que la ruta sea desde el root de tu proyecto correctamente
+        std::filesystem::path projectRoot = std::filesystem::current_path();  // Ya estás parado aquí al correr ./build/TECMFS-Controller
+        std::filesystem::path diskPath = projectRoot / rawPath;
+
+        nodes.push_back(diskPath.string());
         diskStates[i + 1] = true;
     }
+
     std::cout << "[DEBUG] Discos cargados: " << nodes.size() << std::endl;
     for (int i = 0; i < nodes.size(); ++i) {
         std::cout << " - Disco " << (i + 1) << " => " << nodes[i] << std::endl;
     }
 }
-
 
 void Raid5Controller::storeFile(const std::string& filepath) {
     auto data = PdfaBit::readFile(filepath);
@@ -46,13 +52,15 @@ void Raid5Controller::storeFile(const std::string& filepath) {
 
     for (int stripe = 0; stripe < stripeCount; ++stripe) {
         int parityDisk = stripe % totalDisks;
-        std::vector<std::vector<uint8_t>> stripeData(totalDisks, std::vector<uint8_t>(blockSize, 0));
+        std::vector<std::vector<uint8_t>> stripeData(totalDisks); // vacíos por defecto
 
+        // Rellenar los bloques de datos (omitimos disco de paridad)
         for (int i = 0; i < totalDisks; ++i) {
             if (i == parityDisk || blockIndex >= blocks.size()) continue;
             stripeData[i] = blocks[blockIndex++];
         }
 
+        // Calcular paridad XOR de los bloques de datos
         std::vector<uint8_t> parity(blockSize, 0);
         for (int i = 0; i < totalDisks; ++i) {
             if (i == parityDisk || stripeData[i].empty()) continue;
@@ -62,14 +70,16 @@ void Raid5Controller::storeFile(const std::string& filepath) {
         }
         stripeData[parityDisk] = parity;
 
+        // Escribir bloques reales (evitamos escribir vacíos)
         for (int i = 0; i < totalDisks; ++i) {
-            PdfaBit::writeBlock(nodes[i], baseFilename, stripe, stripeData[i]);
+            if (!stripeData[i].empty()) {
+                PdfaBit::writeBlock(nodes[i], baseFilename, stripe, stripeData[i]);
+            }
         }
     }
 
     std::cout << "Archivo almacenado usando RAID 5." << std::endl;
 }
-
 
 bool Raid5Controller::recoverMissingBlocks(const std::string& filename) {
     bool reconstructedBlock = false;
