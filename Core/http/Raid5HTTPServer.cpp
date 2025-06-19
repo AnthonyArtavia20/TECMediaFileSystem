@@ -45,8 +45,10 @@ void Raid5HTTPServer::setup_routes() {
     // Descargar PDF reconstruido
     server.Get("/download", [this](const httplib::Request& req, httplib::Response& res) {
         auto filename = req.get_param_value("name");
+        std::string clean_filename = std::filesystem::path(filename).stem().string();
         std::string output = "/tmp/" + filename;
-        if (controller->rebuildPdfFromDisks(filename, output)) {
+
+        if (controller->rebuildPdfFromDisks(clean_filename, output)) {
             std::ifstream in(output, std::ios::binary);
             std::ostringstream sstr;
             sstr << in.rdbuf();
@@ -61,7 +63,7 @@ void Raid5HTTPServer::setup_routes() {
     server.Post("/upload", [this](const httplib::Request& req, httplib::Response& res) {
         if (req.has_file("file")) {
             const auto& file = req.get_file_value("file");
-            std::string filename = file.filename;
+            std::string filename = std::filesystem::path(file.filename).stem().string();
             std::string temp_path = "/tmp/" + filename;
 
             std::ofstream ofs(temp_path, std::ios::binary);
@@ -69,6 +71,16 @@ void Raid5HTTPServer::setup_routes() {
             ofs.close();
 
             controller->storeFile(temp_path);
+
+            // Reconstruir en /tmp para tener el PDF entero accesible
+            std::string reconstructed = "/tmp/" + filename;
+            bool ok = controller->rebuildPdfFromDisks(filename, reconstructed);
+
+            if (ok) {
+                std::cout << "[INFO] Archivo reconstruido en: " << reconstructed << std::endl;
+            } else {
+                std::cerr << "[ERROR] No se pudo reconstruir el archivo tras subida." << std::endl;
+            }
 
             res.set_content("Archivo subido y almacenado en RAID", "text/plain");
         } else {
