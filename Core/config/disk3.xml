@@ -1,7 +1,7 @@
 <DiskNode>
     <IP>127.0.0.1</IP>
     <Port>5003</Port>
-    <StoragePath>Core/storage/disk1</StoragePath>
+    <StoragePath>Core/storage/disk3</StoragePath>
     <BlockSize>8192</BlockSize>
     <DiskSize>10485760</DiskSize>
 </DiskNode>

@@ -38,17 +38,24 @@ std::vector<uint8_t> PdfaBit::reconstructFromBlocks(const std::vector<std::vecto
 
 // Escribir los bloques que se le pasan al controlador
 void PdfaBit::writeBlock(const std::string& path, const std::string& filename, int stripeIndex, const std::vector<uint8_t>& data) {
-    std::filesystem::create_directories(path);  // Solo asegúrate que el disco exista
-    std::string filepath = path + "/block_" + filename + "_" + std::to_string(stripeIndex) + ".bin";
+    std::filesystem::path fullPath = std::filesystem::path(path) / filename;
+    std::filesystem::create_directories(fullPath);  // Crea la carpeta del archivo dentro del disco
+
+    std::string blockFilename = "block_" + std::to_string(stripeIndex) + ".bin";
+    std::string filepath = (fullPath / blockFilename).string();
+
     std::ofstream out(filepath, std::ios::binary);
+    if (!out) {
+        throw std::runtime_error("No se pudo escribir el bloque en: " + filepath);
+    }
     out.write(reinterpret_cast<const char*>(data.data()), data.size());
 }
 
 
 // Leer los bloques que se le pasan al controlador
 std::vector<uint8_t> PdfaBit::readBlock(const std::string& nodePath, const std::string& filename, int index) {
-    std::string filepath = nodePath + "/block_" + filename + "_" + std::to_string(index) + ".bin";
-    return readFile(filepath);
+    std::filesystem::path blockPath = std::filesystem::path(nodePath) / filename / ("block_" + std::to_string(index) + ".bin");
+    return readFile(blockPath.string());
 }
 
 bool PdfaBit::compare(const std::vector<uint8_t>& a, const std::vector<uint8_t>& b) {
