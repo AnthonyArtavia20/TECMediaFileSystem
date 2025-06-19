@@ -151,19 +151,53 @@ class TecMFSApp(tk.Tk):
         button_frame = tk.Frame(dialog)
         button_frame.pack(pady=5)
 
-        tk.Button(button_frame, text="Descargar", width=12, command=lambda: self.descargar_archivo(dialog, filename)).pack(side=tk.LEFT, padx=10)
+        tk.Button(button_frame, text="Descargar", width=12, command=lambda: self.descargar_archivo()).pack(side=tk.LEFT, padx=10)
 
-        tk.Button(button_frame, text="Eliminar", width=12, command=lambda: self.eliminar_archivo(dialog, filename)).pack(side=tk.RIGHT, padx=10)
+        tk.Button(button_frame, text="Eliminar", width=12, command=lambda: self.eliminar_archivo()).pack(side=tk.RIGHT, padx=10)
 
-    def descargar_archivo(self, dialog, filename):
-        dialog.destroy()
-        print(f"Descargando '{filename}'... (simulado)")
-        messagebox.showinfo("Descargar", f"Archivo '{filename}' descargado correctamente (simulado)")
+    def descargar_archivo(self):
+        selected_item = self.file_table.selection()
+        if not selected_item:
+            messagebox.showwarning("Advertencia", "Por favor seleccione un archivo para descargar.")
+            return
 
-    def eliminar_archivo(self, dialog, filename):
-        dialog.destroy()
-        print(f"Eliminando '{filename}'... (simulado)")
-        messagebox.showwarning("Eliminar", f"Archivo '{filename}' eliminado (simulado)")
+        filename = self.file_table.item(selected_item, "values")[0]
+        print(f"Descargando archivo: {filename}")
+        try:
+            response = requests.get(f"http://localhost:8080/download/{filename}", stream=True)
+            if response.status_code == 200:
+                download_path = os.path.join(os.path.expanduser("~"), "Downloads", filename)
+                with open(download_path, 'wb') as f:
+                    for chunk in response.iter_content(chunk_size=8192):
+                        f.write(chunk)
+                messagebox.showinfo("Descarga completa", f"El archivo '{filename}' ha sido descargado en la carpeta Downloads.")
+            else:
+                messagebox.showerror("Error", f"No se pudo descargar el archivo: {response.status_code} - {response.text}")
+        except Exception as e:
+            messagebox.showerror("Error", f"No se pudo descargar el archivo: {e}")
+
+
+    def eliminar_archivo(self):
+        selected_item = self.file_table.selection()
+        if not selected_item:
+            messagebox.showwarning("Advertencia", "Por favor seleccione un archivo para eliminar.")
+            return
+
+        filename = self.file_table.item(selected_item, "values")[0]
+        confirm = messagebox.askyesno("Confirmar eliminación", f"¿Está seguro de que desea eliminar el archivo '{filename}'?")
+        if not confirm:
+            return
+
+        try:
+            response = requests.delete(f"http://localhost:8080/delete/{filename}")
+            if response.status_code == 200:
+                self.file_table.delete(selected_item)
+                messagebox.showinfo("Eliminado", f"Archivo '{filename}' eliminado correctamente.")
+            else:
+                messagebox.showerror("Error", f"No se pudo eliminar el archivo: {response.status_code} - {response.text}")
+        except Exception as e:
+            messagebox.showerror("Error", f"No se pudo eliminar el archivo: {e}")
+
 
 
     def actualizar_estado_raid(self):

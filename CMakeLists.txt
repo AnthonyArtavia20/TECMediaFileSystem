@@ -16,25 +16,41 @@ target_include_directories(TECMFS-Controller PRIVATE Core/controller Core/http)
 
 # -------- pugixml --------
 if(APPLE)
-    # macOS: usar ruta típica de Homebrew
     message(STATUS "Detected macOS system")
-    include_directories(/usr/local/include)
-    link_directories(/usr/local/lib)
-    target_link_libraries(TECMFS-Disk pugixml)
-    target_link_libraries(TECMFS-Controller pugixml)
+    include_directories(/usr/local/opt/pugixml/include)
+    link_directories(/usr/local/opt/pugixml/lib)
+    set(PUGIXML_LIB /usr/local/opt/pugixml/lib/libpugixml.dylib)
+
+    # Unificar aquí
+    target_link_libraries(TECMFS-Disk PRIVATE ${PUGIXML_LIB})
+    target_link_libraries(TECMFS-Controller
+        PRIVATE
+            ${PUGIXML_LIB}
+    )
 
 elseif(UNIX)
-    # Linux
     message(STATUS "Detected Linux system")
     find_path(PUGIXML_INCLUDE_DIR pugixml.hpp)
     find_library(PUGIXML_LIBRARY NAMES pugixml)
 
     if (PUGIXML_INCLUDE_DIR AND PUGIXML_LIBRARY)
         target_include_directories(TECMFS-Disk PRIVATE ${PUGIXML_INCLUDE_DIR})
-        target_link_libraries(TECMFS-Disk ${PUGIXML_LIBRARY})
+        target_link_libraries(TECMFS-Disk PRIVATE ${PUGIXML_LIBRARY})
         target_include_directories(TECMFS-Controller PRIVATE ${PUGIXML_INCLUDE_DIR})
-        target_link_libraries(TECMFS-Controller ${PUGIXML_LIBRARY})
+        
+        # Unificar aquí también
+        target_link_libraries(TECMFS-Controller
+            PRIVATE
+                ${PUGIXML_LIBRARY}
+        )
     else()
         message(FATAL_ERROR "pugixml not found. Please install it with your package manager.")
     endif()
 endif()
+
+# -------- nlohmann_json --------
+find_package(nlohmann_json REQUIRED)
+target_link_libraries(TECMFS-Controller
+    PRIVATE
+        nlohmann_json::nlohmann_json
+)

@@ -46,17 +46,24 @@ void Raid5HTTPServer::setup_routes() {
     server.Get("/download", [this](const httplib::Request& req, httplib::Response& res) {
         auto filename = req.get_param_value("name");
         std::string clean_filename = std::filesystem::path(filename).stem().string();
-        std::string output = "/tmp/" + filename;
+        std::string expected_path = "Core/storage/output/" + clean_filename + ".pdf";
 
-        if (controller->rebuildPdfFromDisks(clean_filename, output)) {
-            std::ifstream in(output, std::ios::binary);
-            std::ostringstream sstr;
-            sstr << in.rdbuf();
-            res.set_content(sstr.str(), "application/pdf");
+        // Primero reconstruir con la ruta base (sin extensión)
+        if (controller->rebuildPdfFromDisks(clean_filename)) {
+            std::ifstream in(expected_path, std::ios::binary);
+            if (in) {
+                std::ostringstream sstr;
+                sstr << in.rdbuf();
+                res.set_content(sstr.str(), "application/pdf");
+            } else {
+                res.status = 500;
+                res.set_content("Error al leer el archivo reconstruido", "text/plain");
+            }
         } else {
             res.status = 404;
             res.set_content("Archivo no encontrado", "text/plain");
         }
+
     });
 
     // Subir PDF - versión corregida para multipart/form-data
