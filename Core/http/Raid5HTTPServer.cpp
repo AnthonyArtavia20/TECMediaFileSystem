@@ -59,13 +59,20 @@ void Raid5HTTPServer::setup_routes() {
 
     // Subir PDF
     server.Post("/upload", [this](const httplib::Request& req, httplib::Response& res) {
-        auto filename = req.get_param_value("name");
-        std::string temp = "/tmp/" + filename;
-        std::ofstream out(temp, std::ios::binary);
-        out.write(req.body.c_str(), req.body.size());
-        out.close();
-        controller->storeFile(temp);
-        res.set_content("Archivo subido y almacenado en RAID", "text/plain");
+        if (req.has_file("file")) {
+            const auto& file = req.get_file_value("file");
+
+            std::string temp = "/tmp/" + file.filename;
+            std::ofstream ofs(temp, std::ios::binary);
+            ofs << file.content;
+            ofs.close();
+
+            controller->storeFile(temp);
+            res.set_content("Archivo subido y almacenado en RAID", "text/plain");
+        } else {
+            res.status = 400;
+            res.set_content("No se encontró archivo en la solicitud", "text/plain");
+        }
     });
 
     // Configurar blockSize

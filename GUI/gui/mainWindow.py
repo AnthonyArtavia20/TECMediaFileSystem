@@ -9,7 +9,7 @@ from PIL import ImageTk, Image
 from tkinter import ttk, filedialog, messagebox
 from datetime import datetime
 
-#import requests descomentar esto cuadno sirva la GUI
+import requests #descomentar esto cuadno sirva la GUI
 
 from utils.formatUtils import format_bytes
 
@@ -25,7 +25,7 @@ class TecMFSApp(tk.Tk):
         self.create_controls()
 
         # Iniciar actualización periódica del estado del RAID
-        #self.after(1000, self.actualizar_estado_raid_periodicamente)
+        self.after(1000, self.actualizar_estado_raid_periodicamente)
 
     def logoAndTitlePanel(self):
         information_frame = tk.Frame(self, bg="#f2f2f2", pady=8)
@@ -114,12 +114,22 @@ class TecMFSApp(tk.Tk):
     def upload_file(self):
         path = filedialog.askopenfilename()
         if path:
-            filename = path.split("/")[-1]
-            fileSize = os.path.getsize(path)
-            correctBytesSize = format_bytes(fileSize)
-            date = datetime.now().strftime("%Y-%m-%d")
-            self.file_table.insert("", "end", values=(filename, correctBytesSize, date, "Descargar | Eliminar"))
-            messagebox.showinfo("Subida", f"Archivo '{filename}' subido (simulado).")
+            filename = os.path.basename(path)
+            try:
+                with open(path, 'rb') as f:
+                    files = {'file': (filename, f)}
+                    response = requests.post("http://localhost:8080/upload", files=files)
+
+                if response.status_code == 200:
+                    fileSize = os.path.getsize(path)
+                    correctBytesSize = format_bytes(fileSize)
+                    date = datetime.now().strftime("%Y-%m-%d")
+                    self.file_table.insert("", "end", values=(filename, correctBytesSize, date, "Descargar | Eliminar"))
+                    messagebox.showinfo("Subida", f"Archivo '{filename}' subido correctamente.")
+                else:
+                    messagebox.showerror("Error", f"Fallo al subir archivo: {response.status_code} - {response.text}")
+            except Exception as e:
+                messagebox.showerror("Error", f"No se pudo subir el archivo: {e}")
 
     def on_table_click(self,event):
         item = self.file_table.identify_row(event.y)
@@ -155,23 +165,24 @@ class TecMFSApp(tk.Tk):
         print(f"Eliminando '{filename}'... (simulado)")
         messagebox.showwarning("Eliminar", f"Archivo '{filename}' eliminado (simulado)")
 
+
+    def actualizar_estado_raid(self):
+            try:
+                response = requests.get("http://localhost:8080/status")
+                if response.ok:
+                    data = response.json()
+                    estado = data.get("status", "DESCONOCIDO")
+                    color = {"OK": "green", "DEGRADED": "orange", "FAILED": "red"}.get(estado, "black")
+                    self.estado_label.config(text=f"Estado: {estado}", fg=color)
+            except Exception as e:
+                print("Error al obtener estado RAID:", e)
+                self.estado_label.config(text="Estado: Error", fg="red")
+
+    def actualizar_estado_raid_periodicamente(self):
+        self.actualizar_estado_raid()
+        self.after(5000, self.actualizar_estado_raid_periodicamente)
+
 if __name__ == "__main__":
     app = TecMFSApp()
     app.mainloop()
 
-
-    #def actualizar_estado_raid(self):
-    #        try:
-    #            response = requests.get("http://localhost:8080/status")
-    #            if response.ok:
-    #                data = response.json()
-    #                estado = data.get("status", "DESCONOCIDO")
-    #                color = {"OK": "green", "DEGRADED": "orange", "FAILED": "red"}.get(estado, "black")
-    #                self.estado_label.config(text=f"Estado: {estado}", fg=color)
-    #        except Exception as e:
-    #            print("Error al obtener estado RAID:", e)
-    #            self.estado_label.config(text="Estado: Error", fg="red")
-#
-    #def actualizar_estado_raid_periodicamente(self):
-    #    self.actualizar_estado_raid()
-    #    self.after(5000, self.actualizar_estado_raid_periodicamente)
