@@ -27,12 +27,3 @@ sleep 1
 echo "Iniciando controller con PDFs: ${PDFS[*]}"
 ./build/TECMFS-Controller "${PDFS[@]}"
 
-sleep 1
-
-# Espera unos segundos por si los procesos necesitan tiempo
-sleep 2
-
-#echo "Ejecutando GUI en Python..."
-#cd GUI
-#source ../.venv/bin/activate
-#exec python3 main.py
