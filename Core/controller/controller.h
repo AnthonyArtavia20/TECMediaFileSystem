@@ -22,6 +22,7 @@ public:
     bool getDiskState(int id) const;
     int getActiveDiskCount() const;
     int getDiskCount() const;
+    bool deleteFile(const std::string& filename);
 
 private:
     size_t blockSize;

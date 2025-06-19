@@ -157,13 +157,34 @@ class TecMFSApp(tk.Tk):
 
     def descargar_archivo(self, dialog, filename):
         dialog.destroy()
-        print(f"Descargando '{filename}'... (simulado)")
-        messagebox.showinfo("Descargar", f"Archivo '{filename}' descargado correctamente (simulado)")
+        try:
+            response = requests.get(f"http://localhost:8080/download/{filename}", stream=True)
+            if response.status_code == 200:
+                save_path = filedialog.asksaveasfilename(defaultextension=".pdf", initialfile=filename)
+                if save_path:
+                    with open(save_path, 'wb') as f:
+                        for chunk in response.iter_content(1024):
+                            f.write(chunk)
+                    messagebox.showinfo("Descargar", f"Archivo '{filename}' descargado correctamente.")
+            else:
+                messagebox.showerror("Error", f"No se pudo descargar el archivo: {response.status_code}")
+        except Exception as e:
+            messagebox.showerror("Error", f"Error al descargar archivo: {e}")
 
     def eliminar_archivo(self, dialog, filename):
-        dialog.destroy()
-        print(f"Eliminando '{filename}'... (simulado)")
-        messagebox.showwarning("Eliminar", f"Archivo '{filename}' eliminado (simulado)")
+        try:
+            response = requests.delete(f"http://localhost:8080/delete/{filename}")
+            if response.status_code == 200:
+                messagebox.showinfo("Eliminar", f"Archivo '{filename}' eliminado correctamente.")
+                # Eliminarlo de la tabla
+                for item in self.file_table.get_children():
+                    if self.file_table.item(item)['values'][0] == filename:
+                        self.file_table.delete(item)
+                        break
+            else:
+                messagebox.showerror("Error", f"No se pudo eliminar el archivo: {response.status_code}")
+        except Exception as e:
+                messagebox.showerror("Error", f"Error al intentar eliminar el archivo: {e}")
 
 
     def actualizar_estado_raid(self):

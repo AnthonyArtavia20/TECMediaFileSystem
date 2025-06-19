@@ -43,10 +43,10 @@ void Raid5HTTPServer::setup_routes() {
     });
 
     // Descargar PDF reconstruido
-    server.Get("/download", [this](const httplib::Request& req, httplib::Response& res) {
-        auto filename = req.get_param_value("name");
+    server.Get(R"(/download/(.+))", [this](const httplib::Request& req, httplib::Response& res) {
+        std::string filename = req.matches[1];  // extraído desde la URL
         std::string clean_filename = std::filesystem::path(filename).stem().string();
-        std::string output = "/tmp/" + filename;
+        std::string output = "Core/storage/output/" + clean_filename + ".pdf";
 
         if (controller->rebuildPdfFromDisks(clean_filename, output)) {
             std::ifstream in(output, std::ios::binary);
@@ -58,6 +58,7 @@ void Raid5HTTPServer::setup_routes() {
             res.set_content("Archivo no encontrado", "text/plain");
         }
     });
+
 
     // Subir PDF - versión corregida para multipart/form-data
     server.Post("/upload", [this](const httplib::Request& req, httplib::Response& res) {
@@ -126,6 +127,19 @@ void Raid5HTTPServer::setup_routes() {
         j["active_disks"] = count;
         res.set_content(j.dump(), "application/json");
     });
+
+    server.Delete(R"(/delete/(.+))", [this](const httplib::Request& req, httplib::Response& res) {
+        std::string filename = req.matches[1];
+        bool ok = controller->deleteFile(filename);
+
+        if (ok) {
+            res.set_content("Archivo eliminado correctamente", "text/plain");
+        } else {
+            res.status = 404;
+            res.set_content("Archivo no encontrado o error al eliminar", "text/plain");
+        }
+    });
+
 }
 
 void Raid5HTTPServer::start(int port) {

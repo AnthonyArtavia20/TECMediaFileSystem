@@ -180,6 +180,36 @@ bool Raid5Controller::rebuildPdfFromDisks(const std::string& filename, const std
     return true;
 }
 
+bool Raid5Controller::deleteFile(const std::string& filename) {
+    bool success = true;
+    std::string prefix = "block_" + filename + "_";
+
+    for (const auto& path : nodes) {
+        try {
+            for (const auto& entry : std::filesystem::directory_iterator(path)) {
+                if (entry.is_regular_file()) {
+                    std::string fname = entry.path().filename().string();
+                    if (fname.find(prefix) == 0) {
+                        std::filesystem::remove(entry.path());
+                    }
+                }
+            }
+        } catch (const std::exception& e) {
+            std::cerr << "[ERROR] Al eliminar bloques de " << path << ": " << e.what() << "\n";
+            success = false;
+        }
+    }
+
+    // También borra el PDF reconstruido (opcional)
+    std::filesystem::path output = "Core/storage/output/" + filename + ".pdf";
+    if (std::filesystem::exists(output)) {
+        std::filesystem::remove(output);
+    }
+
+    return success;
+}
+
+
 void Raid5Controller::setBlockSize(size_t newBlockSize) {
     blockSize = newBlockSize;
     std::cout << "Nuevo blockSize asignado: " << newBlockSize << std::endl;
