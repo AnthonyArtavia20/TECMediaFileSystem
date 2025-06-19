@@ -57,21 +57,23 @@ void Raid5HTTPServer::setup_routes() {
         }
     });
 
-    // Subir PDF
+    // Subir PDF - versión corregida para multipart/form-data
     server.Post("/upload", [this](const httplib::Request& req, httplib::Response& res) {
         if (req.has_file("file")) {
             const auto& file = req.get_file_value("file");
+            std::string filename = file.filename;
+            std::string temp_path = "/tmp/" + filename;
 
-            std::string temp = "/tmp/" + file.filename;
-            std::ofstream ofs(temp, std::ios::binary);
+            std::ofstream ofs(temp_path, std::ios::binary);
             ofs << file.content;
             ofs.close();
 
-            controller->storeFile(temp);
+            controller->storeFile(temp_path);
+
             res.set_content("Archivo subido y almacenado en RAID", "text/plain");
         } else {
             res.status = 400;
-            res.set_content("No se encontró archivo en la solicitud", "text/plain");
+            res.set_content("No se encontró archivo en la solicitud.", "text/plain");
         }
     });
 
